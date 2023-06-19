@@ -23,6 +23,8 @@ func main() {
 	r := gin.New()
 	//初始化数据库DB
 	bootstrap.SetupDB()
+	// 初始化日志Logger
+	bootstrap.SetupLogger()
 	// 初始化路由绑定
 	bootstrap.SetupRoute(r)
 
