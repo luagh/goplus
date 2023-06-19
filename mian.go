@@ -1,12 +1,12 @@
 package main
 
 import (
+	"Goplus/bootstrap"
+	btsConfig "Goplus/config"
+	"Goplus/pkg/config"
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"gohub/bootstrap"
-	btsConfig "gohub/config"
-	"gohub/pkg/config"
 )
 
 func init() {

@@ -2,8 +2,8 @@
 package bootstrap
 
 import (
+	"Goplus/routes"
 	"github.com/gin-gonic/gin"
-	"gohub/routes"
 	"net/http"
 	"strings"
 )

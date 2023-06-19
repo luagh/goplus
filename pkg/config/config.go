@@ -2,37 +2,39 @@
 package config
 
 import (
+	"Goplus/pkg/helpers"
 	"github.com/spf13/cast"
 	viperlib "github.com/spf13/viper"
-	"gohub/pkg/helpers"
 	"os"
 )
 
-// viper库实例
+// viper 库实例
 var viper *viperlib.Viper
 
-// ConfigFunc动态加载配置信息
+// ConfigFunc 动态加载配置信息
 type ConfigFunc func() map[string]interface{}
 
+// ConfigFuncs 先加载到此数组，loadConfig 再动态生成配置信息
 var ConfigFuncs map[string]ConfigFunc
 
 func init() {
 
-	//1.初始化
+	// 1. 初始化 Viper 库
 	viper = viperlib.New()
-	//2.配置viper库类型 支持类型
+	// 2. 配置类型，支持 "json", "toml", "yaml", "yml", "properties",
+	//             "props", "prop", "env", "dotenv"
 	viper.SetConfigType("env")
-	//3.读取环境变量配置文件
+	// 3. 环境变量配置文件查找的路径，相对于 main.go
 	viper.AddConfigPath(".")
-	//4.设置环境变量信息
+	// 4. 设置环境变量前缀，用以区分 Go 的系统环境变量
 	viper.SetEnvPrefix("appenv")
-	//5.读取环境变量
+	// 5. 读取环境变量（支持 flags）
 	viper.AutomaticEnv()
 
 	ConfigFuncs = make(map[string]ConfigFunc)
 }
 
-// 初始化配置信息完成对环境变量以及 config 信息的加载
+// InitConfig 初始化配置信息，完成对环境变量以及 config 信息的加载
 func InitConfig(env string) {
 	// 1. 加载环境变量
 	loadEnv(env)
@@ -40,30 +42,35 @@ func InitConfig(env string) {
 	loadConfig()
 }
 
-func loadEnv(envsuffix string) {
-	// 默认加载 .env 文件，如果有传参 --env=name 的话，加载 .env.name 文件
-	envPath := ".env"
-	if len(envsuffix) > 0 {
-		filePath := ".env" + envsuffix
-		if _, err := os.Stat(filePath); err == nil {
-			envPath = filePath
-		}
-	}
-	//加载env 例如.env.name
-	viper.SetConfigName(envPath)
-	if err := viper.ReadInConfig(); err != nil {
-		panic(err)
-	}
-	// 监控 .env 文件，变更时重新加载
-	viper.WatchConfig()
-}
 func loadConfig() {
 	for name, fn := range ConfigFuncs {
 		viper.Set(name, fn())
 	}
 }
 
-// env读取环境变量 支持默认值
+func loadEnv(envSuffix string) {
+
+	// 默认加载 .env 文件，如果有传参 --env=name 的话，加载 .env.name 文件
+	envPath := ".env"
+	if len(envSuffix) > 0 {
+		filepath := ".env." + envSuffix
+		if _, err := os.Stat(filepath); err == nil {
+			// 如 .env.testing 或 .env.stage
+			envPath = filepath
+		}
+	}
+
+	// 加载 env
+	viper.SetConfigName(envPath)
+	if err := viper.ReadInConfig(); err != nil {
+		panic(err)
+	}
+
+	// 监控 .env 文件，变更时重新加载
+	viper.WatchConfig()
+}
+
+// Env 读取环境变量，支持默认值
 func Env(envName string, defaultValue ...interface{}) interface{} {
 	if len(defaultValue) > 0 {
 		return internalGet(envName, defaultValue[0])
@@ -71,7 +78,7 @@ func Env(envName string, defaultValue ...interface{}) interface{} {
 	return internalGet(envName)
 }
 
-// add新增配置项
+// Add 新增配置项
 func Add(name string, configFn ConfigFunc) {
 	ConfigFuncs[name] = configFn
 }

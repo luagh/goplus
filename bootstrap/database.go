@@ -1,15 +1,16 @@
 package bootstrap
 
 import (
+	"Goplus/app/models/user"
+	"Goplus/pkg/config"
+	"Goplus/pkg/database"
 	"errors"
 	"fmt"
-	"gohub/app/models/user"
-	"gohub/pkg/config"
-	"gohub/pkg/database"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+
 	"time"
 )
 

@@ -1,6 +1,6 @@
 package config
 
-import "gohub/pkg/config"
+import "Goplus/pkg/config"
 
 func init() {
 	config.Add("app", func() map[string]interface{} {
