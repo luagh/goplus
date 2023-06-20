@@ -25,6 +25,8 @@ func main() {
 	bootstrap.SetupLogger()
 	//初始化数据库DB
 	bootstrap.SetupDB()
+	// 初始化 Redis
+	bootstrap.SetupRedis()
 
 	// 初始化路由绑定
 	bootstrap.SetupRoute(r)
