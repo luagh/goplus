@@ -24,8 +24,6 @@ func (r responseBodyWriter) Write(b []byte) (int, error) {
 }
 
 // Logger 记录请求日志
-
-// Logger 记录请求日志
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 

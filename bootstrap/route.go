@@ -20,10 +20,11 @@ func SetupRoute(router *gin.Engine) {
 	setup404Handler(router)
 }
 
+// 日志中间件
 func registerGlobalMiddleWare(router *gin.Engine) {
 	router.Use(
 		middlewares.Logger(),
-		gin.Recovery())
+		middlewares.Recovery())
 }
 
 func setup404Handler(router *gin.Engine) {
