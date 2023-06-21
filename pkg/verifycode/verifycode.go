@@ -19,7 +19,7 @@ type VerifyCode struct {
 var once sync.Once
 var internalVerifyCode *VerifyCode
 
-func NewVerifyCOde() *VerifyCode {
+func NewVerifyCode() *VerifyCode {
 	once.Do(func() {
 
 		internalVerifyCode = &VerifyCode{
