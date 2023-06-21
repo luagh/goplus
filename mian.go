@@ -30,7 +30,6 @@ func main() {
 
 	// 初始化路由绑定
 	bootstrap.SetupRoute(r)
-
 	gin.SetMode(gin.ReleaseMode)
 	err := r.Run(":" + config.Get("app.port"))
 	if err != nil {
