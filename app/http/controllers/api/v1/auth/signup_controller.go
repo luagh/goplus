@@ -5,7 +5,9 @@ import (
 	v1 "Goplus/app/http/controllers/api/v1"
 	"Goplus/app/models/user"
 	"Goplus/app/requests"
+	"Goplus/pkg/logger"
 	"Goplus/pkg/response"
+	"Goplus/pkg/snowflake"
 	"github.com/gin-gonic/gin"
 )
 
@@ -47,15 +49,18 @@ func (sc *SignupController) SignupUsingPhone(c *gin.Context) {
 	if ok := requests.Validate(c, &request, requests.SignupUsingPhone); !ok {
 		return
 	}
-
+	userID, err := snowflake.GetID()
+	if err != nil {
+		logger.ErrorString("Auth", "GetID", err.Error())
+	}
 	// 2. 验证成功，创建数据
 	_user := user.User{
 		Name:     request.Name,
 		Phone:    request.Phone,
 		Password: request.Password,
+		UserID:   userID,
 	}
 	_user.Create()
-
 	if _user.ID > 0 {
 		response.CreatedJSON(c, gin.H{
 			"data": _user,
@@ -73,12 +78,18 @@ func (sc *SignupController) SignupUsingEmail(c *gin.Context) {
 	if ok := requests.Validate(c, &request, requests.SignupUsingEmail); !ok {
 		return
 	}
+	userID, err := snowflake.GetID()
+	if err != nil {
+		logger.ErrorString("Auth", "GetID", err.Error())
+		response.Abort500(c, "创建用户失败，请稍后尝试~")
+	}
 
 	// 2. 验证成功，创建数据
 	userModel := user.User{
 		Name:     request.Name,
 		Email:    request.Email,
 		Password: request.Password,
+		UserID:   userID,
 	}
 	userModel.Create()
 

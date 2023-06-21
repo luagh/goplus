@@ -9,7 +9,7 @@ import (
 // User 用户模型
 type User struct {
 	models.BaseModel
-
+	UserID   uint64 `json:"user_id"`
 	Name     string `json:"name,omitempty"`
 	Email    string `json:"-"`
 	Phone    string `json:"-"`
