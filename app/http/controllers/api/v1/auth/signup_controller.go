@@ -5,6 +5,7 @@ import (
 	v1 "Goplus/app/http/controllers/api/v1"
 	"Goplus/app/models/user"
 	"Goplus/app/requests"
+	jwt "Goplus/pkg"
 	"Goplus/pkg/logger"
 	"Goplus/pkg/response"
 	"Goplus/pkg/snowflake"
@@ -54,16 +55,16 @@ func (sc *SignupController) SignupUsingPhone(c *gin.Context) {
 		logger.ErrorString("Auth", "GetID", err.Error())
 	}
 	// 2. 验证成功，创建数据
-	_user := user.User{
+	userModel := user.User{
 		Name:     request.Name,
 		Phone:    request.Phone,
 		Password: request.Password,
 		UserID:   userID,
 	}
-	_user.Create()
-	if _user.ID > 0 {
+	userModel.Create()
+	if userModel.ID > 0 {
 		response.CreatedJSON(c, gin.H{
-			"data": _user,
+			"data": userModel,
 		})
 	} else {
 		response.Abort500(c, "创建用户失败，请稍后尝试~")
@@ -94,8 +95,10 @@ func (sc *SignupController) SignupUsingEmail(c *gin.Context) {
 	userModel.Create()
 
 	if userModel.ID > 0 {
+		token := jwt.NewJWT().IssueToken(userModel.GetStringID(), userModel.Name)
 		response.CreatedJSON(c, gin.H{
-			"data": userModel,
+			"data":  userModel,
+			"token": token,
 		})
 	} else {
 		response.Abort500(c, "创建用户失败，请稍后尝试~")
