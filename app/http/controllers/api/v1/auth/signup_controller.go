@@ -5,7 +5,7 @@ import (
 	v1 "Goplus/app/http/controllers/api/v1"
 	"Goplus/app/models/user"
 	"Goplus/app/requests"
-	jwt "Goplus/pkg"
+	"Goplus/pkg/jwt"
 	"Goplus/pkg/logger"
 	"Goplus/pkg/response"
 	"Goplus/pkg/snowflake"
