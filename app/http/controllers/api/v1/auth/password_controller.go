@@ -21,8 +21,25 @@ func (pc *PasswordController) ResetByPhone(c *gin.Context) {
 	if ok := requests.Validate(c, &request, requests.ResetByPhone); !ok {
 		return
 	}
-
+	// 2. 更新密码
 	userModel := user.GetByPhone(request.Phone)
+	if userModel.ID == 0 {
+		response.Abort404(c)
+	} else {
+		userModel.Password = request.Password
+		userModel.Save()
+		response.Success(c)
+	}
+}
+
+func (pc PasswordController) ResetByEmail(c *gin.Context) {
+
+	request := requests.ResetByEmailRequest{}
+
+	if ok := requests.Validate(c, &request, requests.ResetByEmail); !ok {
+		return
+	}
+	userModel := user.GetByEmail(request.Email)
 	if userModel.ID == 0 {
 		response.Abort404(c)
 	} else {
