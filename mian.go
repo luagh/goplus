@@ -1,12 +1,9 @@
 package main
 
 import (
-	"Goplus/app/http/middlewares"
 	"Goplus/bootstrap"
 	btsConfig "Goplus/config"
-	"Goplus/pkg/auth"
 	"Goplus/pkg/config"
-	"Goplus/pkg/response"
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -34,11 +31,6 @@ func main() {
 	bootstrap.SetupSnowflake()
 	// 初始化路由绑定
 	bootstrap.SetupRoute(r)
-
-	r.GET("/test_auth", middlewares.AuthJWT(), func(c *gin.Context) {
-		userModel := auth.CurrentUser(c)
-		response.Data(c, userModel)
-	})
 	gin.SetMode(gin.ReleaseMode)
 	err := r.Run(":" + config.Get("app.port"))
 	if err != nil {
