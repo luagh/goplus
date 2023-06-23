@@ -1,40 +1,61 @@
 package main
 
 import (
+	"Goplus/app/cmd"
 	"Goplus/bootstrap"
-	btsConfig "Goplus/config"
+	btsConig "Goplus/config"
 	"Goplus/pkg/config"
-	"flag"
+	"Goplus/pkg/console"
 	"fmt"
-	"github.com/gin-gonic/gin"
+	"github.com/spf13/cobra"
+	"os"
 )
 
 func init() {
 	// 加载 config 目录下的配置信息
-	btsConfig.Initialize()
+	btsConig.Initialize()
 }
+
 func main() {
-	//配置初始化 依赖命令行 --env参数
-	var env string
-	flag.StringVar(&env, "env", "", "加载 .env 文件，如 --env=testing 加载的是 .env.testing 文件")
-	flag.Parse()
-	config.InitConfig(env)
-	// new 一个 Gin Engine 实例
-	r := gin.New()
-	// 初始化日志Logger
-	bootstrap.SetupLogger()
-	//初始化数据库DB
-	bootstrap.SetupDB()
-	// 初始化 Redis
-	bootstrap.SetupRedis()
-	//初始化雪花算法
-	bootstrap.SetupSnowflake()
-	// 初始化路由绑定
-	bootstrap.SetupRoute(r)
-	gin.SetMode(gin.ReleaseMode)
-	err := r.Run(":" + config.Get("app.port"))
-	if err != nil {
-		// 错误处理，端口被占用了或者其他错误
-		fmt.Println(err.Error())
+
+	// 应用的主入口，默认调用 cmd.CmdServe 命令
+	var rootCmd = &cobra.Command{
+		Use:   "Goplus",
+		Short: "A simple forum project",
+		Long:  `Default will run "serve" command, you can use "-h" flag to see all subcommands`,
+
+		// rootCmd 的所有子命令都会执行以下代码
+		PersistentPreRun: func(command *cobra.Command, args []string) {
+
+			// 配置初始化，依赖命令行 --env 参数
+			config.InitConfig(cmd.Env)
+
+			// 初始化 Logger
+			bootstrap.SetupLogger()
+
+			// 初始化数据库
+			bootstrap.SetupDB()
+
+			// 初始化 Redis
+			bootstrap.SetupRedis()
+
+			// 初始化缓存
+		},
+	}
+
+	// 注册子命令
+	rootCmd.AddCommand(
+		cmd.CmdServe,
+	)
+
+	// 配置默认运行 Web 服务
+	cmd.RegisterDefaultCmd(rootCmd, cmd.CmdServe)
+
+	// 注册全局参数，--env
+	cmd.RegisterGlobalFlags(rootCmd)
+
+	// 执行主命令
+	if err := rootCmd.Execute(); err != nil {
+		console.Exit(fmt.Sprintf("Failed to run app with %v: %s", os.Args, err.Error()))
 	}
 }
