@@ -36,11 +36,11 @@ func init() {
 	// 注册 make 的子命令
 	CmdMake.AddCommand(
 		CmdMakeCMD,
+		CmdMakeModel,
 	)
 }
 
 // makeModelFromString 格式化用户输入的内容
-
 func makeModelFromString(name string) Model {
 	model := Model{}
 	model.StructName = str.Singular(strcase.ToCamel(name))
