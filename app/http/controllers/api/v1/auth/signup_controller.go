@@ -9,6 +9,7 @@ import (
 	"Goplus/pkg/logger"
 	"Goplus/pkg/response"
 	"Goplus/pkg/snowflake"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -59,9 +60,10 @@ func (sc *SignupController) SignupUsingPhone(c *gin.Context) {
 		Name:     request.Name,
 		Phone:    request.Phone,
 		Password: request.Password,
-		UserID:   userID,
 	}
+	userModel.ID = userID
 	userModel.Create()
+	fmt.Println("222", userModel)
 	if userModel.ID > 0 {
 		response.CreatedJSON(c, gin.H{
 			"data": userModel,
@@ -90,8 +92,8 @@ func (sc *SignupController) SignupUsingEmail(c *gin.Context) {
 		Name:     request.Name,
 		Email:    request.Email,
 		Password: request.Password,
-		UserID:   userID,
 	}
+	userModel.ID = userID
 	userModel.Create()
 
 	if userModel.ID > 0 {
