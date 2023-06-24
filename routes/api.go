@@ -1,6 +1,7 @@
 package routes
 
 import (
+	controllers "Goplus/app/http/controllers/api/v1"
 	"Goplus/app/http/controllers/api/v1/auth"
 	"Goplus/app/http/middlewares"
 	"github.com/gin-gonic/gin"
@@ -48,5 +49,8 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			// 图片验证码
 			authGroup.POST("/verify-codes/captcha", middlewares.LimitPerRoute("50-H"), vcc.ShowCaptcha)
 		}
+		// 获取当前用户
+		uc := new(controllers.UsersController)
+		v1.GET("/user", middlewares.AuthJWT(), uc.CurrentUser)
 	}
 }
