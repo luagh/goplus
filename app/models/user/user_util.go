@@ -1,6 +1,8 @@
 package user
 
-import "Goplus/pkg/database"
+import (
+	"Goplus/pkg/database"
+)
 
 // IsEmailExist 判断 Email 已被注册
 func IsEmailExist(email string) bool {
