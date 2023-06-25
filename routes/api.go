@@ -51,7 +51,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 
 			//专栏
 			cl := new(controllers.ColumnsController)
-			clGroup := v1.Group("/columns")
+			clGroup := v1.Group("/column")
 			{
 				//创建专栏
 				clGroup.POST("", middlewares.AuthJWT(), cl.Store)
