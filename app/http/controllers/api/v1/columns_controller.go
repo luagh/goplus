@@ -39,6 +39,15 @@ func (ctrl *ColumnsController) Store(c *gin.Context) {
 	}
 }
 
+// 所有专栏
+func (ctrl *ColumnsController) Index(c *gin.Context) {
+	data, pager := column.Paginate(c, 10)
+	response.JSON(c, gin.H{
+		"data":  data,
+		"paper": pager,
+	})
+}
+
 // 更新专栏
 func (ctrl *ColumnsController) Update(c *gin.Context) {
 	// 验证 url 参数 id 是否正确
