@@ -49,11 +49,14 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			// 图片验证码
 			authGroup.POST("/verify-codes/captcha", middlewares.LimitPerRoute("50-H"), vcc.ShowCaptcha)
 
-			//创建专栏
+			//专栏
 			cl := new(controllers.ColumnsController)
 			clGroup := v1.Group("/columns")
 			{
+				//创建专栏
 				clGroup.POST("", middlewares.AuthJWT(), cl.Store)
+				//更新专栏
+				clGroup.PUT("/:id", middlewares.AuthJWT(), cl.Update)
 			}
 		}
 		// 获取当前用户
